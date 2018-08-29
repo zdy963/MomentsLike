@@ -79,7 +79,7 @@ def paste_title(name):
             title.text((97,56),line_2,font=Ping,fill=title_color)
         else:
             title.text((97,48),name,font=Ping,fill=title_color)
-            background.save(bg_path)
+        background.save(bg_path)
 
 
 def userhead(usrn):
