@@ -10,6 +10,8 @@ def read_url(url):
     :param url: 传入的链接
     :return: 封面图片的url
     """
+    print("Extrating URL")
+
     response = requests.get(url)
     html = response.text
 
@@ -20,12 +22,13 @@ def read_url(url):
     return title, pic_url
 
 
-def pic_download(url,name):
+def pic_download(url, name):
     """
     下载链接的图片
     :param url: 图片url
     :return: 
     """
+    print("Downloading picture")
     pic = requests.get(url)
     pic_name = str(name) + '.png'
     pic_path = 'pics/' + pic_name
@@ -41,26 +44,17 @@ def into_square(name):
     """
     pic_name = str(name) + '.png'
     pic_path = 'pics/' + pic_name
-    pic = Image.open(pic_path)
-    size = pic.size     # 返回变量为一个元组(长,宽)
-    # print(size)
-    x = (size[0]-size[1]) / 2
-    y = 0
-    w = size[1]
-    h = size[1]
-    square = pic.crop((x,y,x+w,y+h))
-    square.save(pic_path)
+    with Image.open(pic_path) as pic:
+        size = pic.size     # 返回变量为一个元组(长,宽)
+        # print(size)
+        x = (size[0]-size[1]) / 2
+        y = 0
+        w = size[1]
+        h = size[1]
+        square = pic.crop((x,y,x+w,y+h))
+        square.save(pic_path)
 
 
-def omit_title(title):
-    """
-    省略标题
-    :param title: 原始标题
-    :return: 省略后的标题
-    """
-    # 暂时先不管了orz，还不知道微信对标题字数的限制，以及每个符号占多少个位置
-
-#
 # def get_info(url):
 #     """
 #     从链接中获取文章的信息，并对信息进行处理
@@ -71,3 +65,8 @@ def omit_title(title):
 #     title, pic_url = read_url(url)
 #     pic_download(pic_url, title)
 #     into_square(title)
+
+
+if __name__ == '__main__':
+    url = "www.baidu.com"
+    read_url(url)
