@@ -118,15 +118,16 @@ def likes(num):
     :param num: 点赞个数
     :return: 
     """
+    if num > 54:
+        num = 53
+        count = 53
+    else:
+        count = num
     row = int(ceil(num / 7))
     # print("total rows:",row)
     bg_path = 'pics/likes/likes' + str(row) + '.png'
     with Image.open(bg_path) as background:
         bg = background.copy()
-    if num > 49:
-        count = 49
-    else:
-        count = num
 
     index = 1
     for r in range(row-1):
