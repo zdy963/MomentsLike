@@ -53,9 +53,10 @@ def get_image(imageid):
     :return: 
     """
     print("Opening image.")
-    with open('%s.jpg'%(imageid),'rb') as image:
-        resp = Response(image,mimetype="image/jpg")
-        return resp
+    image = open('%s.jpg'%(imageid),'rb')
+    resp = Response(image,mimetype="image/jpg")
+    # image.close()
+    return resp
 
 
 if __name__ == '__main__':
