@@ -82,7 +82,7 @@ def paste_title(name):
         background.save(bg_path)
 
 
-def userhead(usrn):
+def userhead(uid):
     """
     替换用户头像
     :param usrn: 用户名
@@ -90,7 +90,10 @@ def userhead(usrn):
     """
     with Image.open('pics/head_null.png') as background:
         bg = background.copy()
-    head_path = 'pics/portrail/' + str(usrn) + '.jpeg'
+    if uid == '0':
+        head_path = 'pics/portrait/0.jpg'
+    else:
+        head_path = 'pics/portrait/u' + str(uid) + '.jpg'
     with Image.open(head_path) as head:
         head_resize = head.resize((80,80))
     bg.paste(head_resize,(24,20))
@@ -132,7 +135,7 @@ def likes(num):
     index = 1
     for r in range(row-1):
         for i in range(index,index+7):
-            prtl_path = 'pics/portrail/' + str(i) + '.jpg'
+            prtl_path = 'pics/portrait/' + str(i) + '.jpg'
             xcoor = 20 + 68 + (70+10) * (i-index)
             with Image.open(prtl_path) as prtl:
               bg.paste(prtl,(xcoor,28+ r*80))
@@ -141,7 +144,7 @@ def likes(num):
         # print('index:',index)
     for i in range(index,count+1):
         # print(i)
-        prtl_path = 'pics/portrail/' + str(i) + '.jpg'
+        prtl_path = 'pics/portrait/' + str(i) + '.jpg'
         xcoor = 20 + 68 + (70 + 10) * (i - index)
         with Image.open(prtl_path) as prtl:
             bg.paste(prtl, (xcoor, 28 + (row-1) * 80))
