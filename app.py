@@ -2,6 +2,8 @@ from flask import Flask,request, Response
 from get_info import read_url,pic_download,into_square
 from pics_joint import cover_pic, paste_title,likes,username,combine_pics,userhead
 
+from users_service import register,wx_login
+
 app = Flask(__name__)
 
 
@@ -22,14 +24,14 @@ def get_url():
     if not mode:   # testing mode
         print("Testing mode")
         url = 'https://mp.weixin.qq.com/s/g-xI1RkU7UUC8pQsDCZD_A'
-        usrhead = '0'
+        uid = '0'
         usrname = '葛蒙蒙'
     else:             # regular mode
         print("Regular mode")
+        uid = request.args.get('uid')
         url = request.args.get('url')
-        usrhead = request.args.get('head')
         usrname = request.args.get('name')
-    print("Getting info as:----------\nurl:%s\nuserhead:%s\nusername:%s\n------------------"%(url,usrhead,usrname))
+    print("Getting info as:----------\nurl:%s\nuid:%s\nusername:%s\n------------------"%(url,uid,usrname))
 
     title, pic_url = read_url(url)  # 从url中读取缩略图url及标题
     pic_download(pic_url, title)    # 下载缩略图
@@ -38,7 +40,7 @@ def get_url():
     # 生成点赞页面
     cover_pic(title)                # 放置缩略图
     paste_title(title)              # 放置标题
-    userhead(usrhead)               # 放置用户头像
+    userhead(uid)               # 放置用户头像
     username(usrname)               # 放置用户昵称
     likes(likenum)                  # 放置点赞用户头像
     combine_pics(title)             # 页面拼接
@@ -57,6 +59,24 @@ def get_image(imageid):
     resp = Response(image,mimetype="image/jpg")
     # image.close()
     return resp
+
+
+@app.route('/login')
+def login():
+    """
+    非常偷懒的登陆方式，使用wx_id换user的id
+    :return: userid
+    """
+    wx_id = request.args.get('wxid')
+    avatar = request.args.get('avatar')
+    username = request.args.get('username')
+    print("wxid:",wx_id)
+
+    uid = wx_login(wx_id)
+    if not uid:
+        uid = register(wx_id,avatar,username)
+
+    return uid
 
 
 if __name__ == '__main__':
