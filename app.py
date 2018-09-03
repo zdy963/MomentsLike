@@ -2,7 +2,7 @@ from flask import Flask,request, Response
 from get_info import read_url,pic_download,into_square
 from pics_joint import cover_pic, paste_title,likes,username,combine_pics,userhead
 
-from users_service import register,wx_login
+from users_service import register,wx_login, update_portrait
 
 app = Flask(__name__)
 
@@ -65,6 +65,7 @@ def get_image(imageid):
 def login():
     """
     非常偷懒的登陆方式，使用wx_id换user的id
+    如果没有注册就帮用户注册了再登陆
     :return: userid
     """
     wx_id = request.args.get('wxid')
@@ -72,11 +73,25 @@ def login():
     username = request.args.get('username')
     print("wxid:",wx_id)
 
-    uid = wx_login(wx_id)
+    uid = wx_login(wx_id,avatar)
     if not uid:
         uid = register(wx_id,avatar,username)
 
     return uid
+
+
+@app.route('/update')
+def update():
+    """
+    更新用户的头像
+    这个动作应该在用户每次登陆的时候进行
+    :return: 
+    """
+    avatar = request.args.get('avatar')
+    uid = request.args.get('uid')
+    suc = update_portrait(uid,avatar)
+    if suc:
+        return avatar
 
 
 if __name__ == '__main__':
