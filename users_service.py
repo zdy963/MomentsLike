@@ -13,17 +13,16 @@ def wx_login(wx_id,avatar):
         cursor = db.cursor()
         query_id = "SELECT ID FROM USERS WHERE WX_ID='%s'" %(wx_id)
         cursor.execute(query_id)
-        uid = str(cursor.fetchone()[0])
-
-        # 顺手注册
-        if not uid:
+        try:
+            uid = str(cursor.fetchone()[0])
+            print("---------Login success!---------")
+            print("uid:", uid)
+            update_portrait(uid, avatar)
+            return uid
+        except TypeError:
+            # 顺手注册
             print("---------User doesn't exist---------")
             return False
-        else:
-            print("---------Login success!---------")
-            print("uid:",uid)
-            update_portrait(uid,avatar)
-            return uid
 
 
 def register(wx_id,avatar,username):
@@ -45,7 +44,7 @@ def register(wx_id,avatar,username):
         db.commit()
         print("---------Register success!---------")
         # except:
-        uid = wx_login(wx_id)
+        uid = wx_login(wx_id,avatar)
         print("---------Login success!---------")
         print("uid:",uid)
         return uid
