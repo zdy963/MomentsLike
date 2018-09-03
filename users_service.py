@@ -1,10 +1,11 @@
 from conn import dbconn
 
 
-def wx_login(wx_id):
+def wx_login(wx_id,avatar):
     """
     使用wx_id找uid
     :param wx_id: 用户的微信id
+    :param uid: 用户id
     :return: uid
     """
     print("---------Loging in---------")
@@ -21,6 +22,7 @@ def wx_login(wx_id):
         else:
             print("---------Login success!---------")
             print("uid:",uid)
+            update_portrait(uid,avatar)
             return uid
 
 
@@ -47,3 +49,23 @@ def register(wx_id,avatar,username):
         print("---------Login success!---------")
         print("uid:",uid)
         return uid
+
+
+def update_portrait(uid,avatar):
+    """
+    更行用户的头像
+    :param uid: 用户id
+    :param avatar: 头像url
+    :return: 
+    """
+    print("---------Updating---------")
+    if avatar is None:
+        avatar = 'default'
+    with dbconn() as db:
+        cursor = db.cursor()
+        print("uid:", uid)
+        print("avatar:", avatar)
+        portrait_update = "UPDATE USERS SET AVATAR='%s' WHERE ID=%s"%(avatar,uid)
+        cursor.execute(portrait_update)
+        db.commit()
+        print("---------Update success!---------")
