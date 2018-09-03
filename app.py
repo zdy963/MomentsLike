@@ -74,7 +74,7 @@ def login():
     print("wxid:",wx_id)
 
     uid = wx_login(wx_id,avatar)
-    if not uid:
+    if uid is False:
         uid = register(wx_id,avatar,username)
 
     return uid
