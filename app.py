@@ -1,7 +1,7 @@
 from flask import Flask,request, Response
 from get_info import read_url,pic_download,into_square
 from pics_joint import cover_pic, paste_title,likes,username,combine_pics,userhead
-
+from portrait_service import download_portrait
 from users_service import register,wx_login, update_portrait
 
 app = Flask(__name__)
@@ -66,6 +66,7 @@ def login():
     """
     非常偷懒的登陆方式，使用wx_id换user的id
     如果没有注册就帮用户注册了再登陆
+    最后为用户更新头像
     :return: userid
     """
     wx_id = request.args.get('wxid')
@@ -76,6 +77,11 @@ def login():
     uid = wx_login(wx_id,avatar)
     if uid is False:
         uid = register(wx_id,avatar,username)
+    else:
+        # Automatically update user's portrait url
+        update_portrait(uid, avatar)
+
+    download_portrait(avatar, uid)
 
     return uid
 
