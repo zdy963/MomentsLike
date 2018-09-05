@@ -2,19 +2,6 @@ from PIL import Image
 import requests
 
 
-def download_portrait(url,uid):
-    """
-    下载用户的头像，并保存至u+uid.png
-    :param url: 用户头像的url
-    :param uid: 用户ID
-    :return: 
-    """
-    pic = requests.get(url,stream=True)
-    with open('pics/portrait/u%d.jpg'%(uid),'wb') as img:
-        for chunk in pic.iter_content():
-            img.write(chunk)
-
-
 def thumbnail(name):
     """
     图像压缩，保存为同一个名字的文件
@@ -28,6 +15,21 @@ def thumbnail(name):
         print('Compressing')
         img.thumbnail((70,70))
         img.save('pics/portrait/%s.jpg' %(name))
+
+
+def download_portrait(url,uid):
+    """
+    下载用户的头像，并保存至u+uid.png
+    :param url: 用户头像的url
+    :param uid: 用户ID
+    :return: 
+    """
+    pic = requests.get(url,stream=True)
+    with open('pics/portrait/u%d.jpg'%(uid),'wb') as img:
+        for chunk in pic.iter_content():
+            img.write(chunk)
+    name = 'u%d'%(uid)
+    thumbnail(name)
 
 
 if __name__ == '__main__':
