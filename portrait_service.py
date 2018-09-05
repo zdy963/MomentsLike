@@ -28,10 +28,10 @@ def download_portrait(url,uid):
     """
     pic = requests.get(url,stream=True)
     print("---------Downloading portrait---------")
-    with open('pics/portrait/u%d.jpg' % uid, 'wb') as img:
+    with open('pics/portrait/u%s.jpg' % uid, 'wb') as img:
         for chunk in pic.iter_content():
             img.write(chunk)
-    name = 'u%d' % uid
+    name = 'u%s' % uid
     print("---------Successed! Portrait name is %s.jpg---------" % name)
     thumbnail(name)
 
