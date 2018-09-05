@@ -9,12 +9,14 @@ def thumbnail(name):
     :param name: 图片名
     :return: 
     """
-    img = Image.open('pics/portrait/%s.jpg' %(name))
+    print("---------Thumbnailing---------")
+    img = Image.open('pics/portrait/%s.jpg' % name)
     x,y = img.size
     if x > 70 or y > 70:
         print('Compressing')
         img.thumbnail((70,70))
-        img.save('pics/portrait/%s.jpg' %(name))
+        img.save('pics/portrait/%s.jpg' % name)
+        print("---------Thumbnailing as %s.jpg---------" % name)
 
 
 def download_portrait(url,uid):
@@ -25,10 +27,12 @@ def download_portrait(url,uid):
     :return: 
     """
     pic = requests.get(url,stream=True)
-    with open('pics/portrait/u%d.jpg'%(uid),'wb') as img:
+    print("---------Downloading portrait---------")
+    with open('pics/portrait/u%d.jpg' % uid, 'wb') as img:
         for chunk in pic.iter_content():
             img.write(chunk)
-    name = 'u%d'%(uid)
+    name = 'u%d' % uid
+    print("---------Successed! Portrait name is %s.jpg---------" % name)
     thumbnail(name)
 
 
