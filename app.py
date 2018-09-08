@@ -1,6 +1,6 @@
-from flask import Flask,request, Response
-from get_info import read_url,pic_download,into_square
-from pics_joint import cover_pic, paste_title,likes,username,combine_pics,userhead
+from flask import Flask,request, Response, jsonify
+from get_info import get_info
+from pics_joint import pics_joint
 from portrait_service import download_portrait
 from users_service import register,wx_login, update_portrait
 
@@ -21,38 +21,38 @@ def get_url():
     mode = request.args.get('mode')
     likenum = int(request.args.get('num'))
 
-    if not mode:   # testing mode
+    if not mode:        # testing mode
         print("Testing mode")
         url = 'https://mp.weixin.qq.com/s/g-xI1RkU7UUC8pQsDCZD_A'
         uid = '0'
         usrname = '葛蒙蒙'
-    else:             # regular mode
+
+    else:               # regular mode
         print("Regular mode")
         uid = request.args.get('uid')
         url = request.args.get('url')
         usrname = request.args.get('name')
     print("Getting info as:----------\nurl:%s\nuid:%s\nusername:%s\n------------------"%(url,uid,usrname))
 
-    title, pic_url = read_url(url)  # 从url中读取缩略图url及标题
-    pic_download(pic_url, title)    # 下载缩略图
-    into_square(title)              # 裁剪缩略图为正方形
+    info = get_info(url)                            # 从链接中提取信息，并下载至本地
 
-    # 生成点赞页面
-    cover_pic(title)                # 放置缩略图
-    paste_title(title)              # 放置标题
-    userhead(uid)               # 放置用户头像
-    username(usrname)               # 放置用户昵称
-    likes(likenum)                  # 放置点赞用户头像
-    combine_pics(title)             # 页面拼接
-    return url
+    if info['code'] == 1:                           # 当信息提取成功时
+        title = info['title']
+        pics_joint(title, uid, usrname, likenum)    # 生成点赞页面
+
+        rep = {'code': 1, 'content': url}
+    else:                                           # 若信息提取失败，则直接返回错误信息类型
+        rep = info
+
+    return jsonify(rep)
 
 
 @app.route('/image/<imageid>')
 def get_image(imageid):
     """
-    通过url访问最后生成的点赞页面的sjpg
+    通过url访问最后生成的点赞页面的jpg
     :param imageid: 
-    :return: 
+    :return: 直接返回图片
     """
     print("Opening image.")
     image = open('%s.jpg'%(imageid),'rb')
@@ -76,7 +76,7 @@ def login():
 
     uid = wx_login(wx_id,avatar)
     if uid is False:
-        uid = register(wx_id,avatar,username)
+        uid = register(wx_id,avatar,username)   # Be careful, variable 'uid' is a string
     else:
         # Automatically update user's portrait url
         update_portrait(uid, avatar)
