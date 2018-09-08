@@ -190,3 +190,20 @@ def combine_pics(ttl):
 
     bg = bg.convert('RGB')
     bg.save('final.jpg')
+
+
+def pics_joint(title,uid,usrname,likenum):
+    """
+    生成个部分图片，并拼接成最终图片
+    :param title: 文章标题
+    :param uid: 用户ID
+    :param usrname: 用户名
+    :param likenum: 点赞数量
+    :return: 
+    """
+    cover_pic(title)                # 放置缩略图
+    paste_title(title)              # 放置标题
+    userhead(uid)                   # 放置用户头像
+    username(usrname)               # 放置用户昵称
+    likes(likenum)                  # 放置点赞用户头像
+    combine_pics(title)             # 页面拼接
