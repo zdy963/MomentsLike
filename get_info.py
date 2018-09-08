@@ -12,14 +12,26 @@ def read_url(url):
     """
     print("Extrating URL")
 
-    response = requests.get(url)
+    try:
+        response = requests.get(url)
+    except requests.exceptions.MissingSchema:
+        print("Wrong url.")
+        rep = {'code':0, 'Error': 'Wrong URL.'}
+        return rep
     html = response.text
 
-    # re.S可以令正则中的.匹配包括换行符在内的任意符号
-    pic = re.match('^.*?var msg_title = "(.*?)".*?var msg_cdn_url = "(\S*?)".*?$', html, re.S)
-    title = pic.group(1)
-    pic_url = pic.group(2)
-    return title, pic_url
+    try:
+        # re.S可以令正则中的.匹配包括换行符在内的任意符号
+        pic = re.match('^.*?var msg_title = "(.*?)".*?var msg_cdn_url = "(\S*?)".*?$', html, re.S)
+        title = pic.group(1)
+        pic_url = pic.group(2)
+    except AttributeError:
+        print("URL is not a wechat passage link.")
+        rep = {'code':-1, 'Error':'URL is not a wechat passage link.'}
+        return rep
+
+    rep = {'code':1, 'title':title, 'pic_url':pic_url}
+    return rep
 
 
 def pic_download(url, name):
@@ -55,16 +67,22 @@ def into_square(name):
         square.save(pic_path)
 
 
-# def get_info(url):
-#     """
-#     从链接中获取文章的信息，并对信息进行处理
-#     主要是提取出封面图并裁剪为正方形，提取出文章标题并对标题进行部分省略
-#     :param url:
-#     :return:
-#     """
-#     title, pic_url = read_url(url)
-#     pic_download(pic_url, title)
-#     into_square(title)
+def get_info(url):
+    """
+    从链接中获取文章的信息，并对信息进行处理
+    主要是提取出封面图并裁剪为正方形，提取出文章标题并对标题进行部分省略
+    :param url:
+    :return:
+    """
+    info = read_url(url)
+    if info['code'] == 1:           # 当用户输入的url正确时
+        title = info['title']
+        pic_url = info['pic_url']
+
+        pic_download(pic_url, title)
+        into_square(title)
+
+    return info
 
 
 if __name__ == '__main__':
