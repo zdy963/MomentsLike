@@ -58,7 +58,6 @@ def into_square(name):
     pic_path = 'pics/' + pic_name
     with Image.open(pic_path) as pic:
         size = pic.size     # 返回变量为一个元组(长,宽)
-        # print(size)
         x = (size[0]-size[1]) / 2
         y = 0
         w = size[1]
